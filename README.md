@@ -101,7 +101,7 @@ The radar interface will display the measured distance in real time.
 
 ## ESP32 Code
 
-[View the ESP32 code](main/main.cpp)
+[View the ESP32 code](main.cpp)
 
 ## Future Features
 
