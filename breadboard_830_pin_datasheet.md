@@ -26,3 +26,5 @@
 | 1 kΩ | B32 | B35 |
 | 1 kΩ | C35 | C38 |
 | 4.7 kΩ | D38 | D41 |
+
+> **Note:** The HC-SR04 ECHO signal is connected to GPIO26 through a resistor voltage divider to reduce the 5V signal to a safer level for the ESP32.
