@@ -72,13 +72,13 @@ Open the project in VS Code with PlatformIO and upload the firmware.
 Alternatively, from CMD:
 
 ```bat
-C:\Users\AK74\.platformio\penv\Scripts\platformio.exe run --target upload
+C:\Users\%USERNAME%\.platformio\penv\Scripts\platformio.exe run --target upload
 ```
 
 ### 6. Open the Serial Monitor
 
 ```bat
-C:\Users\AK74\.platformio\penv\Scripts\platformio.exe device monitor --port COM3 --baud 115200
+C:\Users\%USERNAME%\.platformio\penv\Scripts\platformio.exe device monitor --port COM3 --baud 115200
 ```
 
 The ESP32 should connect to Wi-Fi and print its local IP address:
