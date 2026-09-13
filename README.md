@@ -254,13 +254,14 @@ esp-32-radar/
 
 # Wi-Fi Configuration
 
-Before uploading the firmware, configure your Wi-Fi credentials in the source code.
+Before uploading the firmware, configure your Wi-Fi credentials in `platformio.ini` build flags.
 
 Example:
 
-```cpp
-const char* ssid = "YOUR_WIFI_NAME";
-const char* password = "YOUR_WIFI_PASSWORD";
+```ini
+build_flags =
+  -DWIFI_SSID=\"YOUR_WIFI_NAME\"
+  -DWIFI_PASSWORD=\"YOUR_WIFI_PASSWORD\"
 ```
 
 Replace the placeholder values with your own network credentials.

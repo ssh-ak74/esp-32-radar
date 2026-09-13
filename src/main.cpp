@@ -3,9 +3,16 @@
 #include <WiFi.h>
 #include <WebServer.h>
 
-// Wi-Fi settings
-const char* WIFI_SSID = "internet";
-const char* WIFI_PASSWORD = "big_password";
+// Wi-Fi settings (set with build flags or keep empty and define locally)
+#ifndef WIFI_SSID
+#define WIFI_SSID ""
+#endif
+
+#ifndef WIFI_PASSWORD
+#define WIFI_PASSWORD ""
+#endif
+
+const unsigned long WIFI_CONNECT_TIMEOUT_MS = 20000;
 
 // HC-SR04
 const int TRIG_PIN = 25;
@@ -402,17 +409,25 @@ void setup() {
     Serial.println();
     Serial.print("Connecting to Wi-Fi");
 
-    while (WiFi.status() != WL_CONNECTED) {
+    const unsigned long wifiConnectStart = millis();
+
+    while (
+        WiFi.status() != WL_CONNECTED &&
+        (millis() - wifiConnectStart) < WIFI_CONNECT_TIMEOUT_MS
+    ) {
 
         delay(500);
         Serial.print(".");
     }
 
     Serial.println();
-    Serial.println("Wi-Fi connected!");
-
-    Serial.print("ESP32 IP address: ");
-    Serial.println(WiFi.localIP());
+    if (WiFi.status() == WL_CONNECTED) {
+        Serial.println("Wi-Fi connected!");
+        Serial.print("ESP32 IP address: ");
+        Serial.println(WiFi.localIP());
+    } else {
+        Serial.println("Wi-Fi connection timeout. Continuing without network.");
+    }
 
     // Start web server
     server.on("/", handleRoot);
