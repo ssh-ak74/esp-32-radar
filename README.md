@@ -520,3 +520,10 @@ GitHub: **[@ssh-ak74](https://github.com/ssh-ak74)**
 ---
 
 ⭐ If this project helped you learn something about ESP32, ultrasonic sensors, embedded systems, or web servers, consider starring the repository.
+
+---
+## License
+
+This project is licensed under the [MIT License](LICENSE).
+
+You are free to use, copy, modify, distribute, and commercially use this project, provided that the original copyright and license notice are retained.
