@@ -1,15 +1,13 @@
-// ts might get updated cuz am still working on it
 #include <Arduino.h>
 #include <WiFi.h>
 #include <WebServer.h>
 
-// Wi-Fi settings (set with build flags or keep empty and define locally)
 #ifndef WIFI_SSID
-#define WIFI_SSID ""
+#define WIFI_SSID "ssid"
 #endif
 
 #ifndef WIFI_PASSWORD
-#define WIFI_PASSWORD ""
+#define WIFI_PASSWORD "password"
 #endif
 
 const unsigned long WIFI_CONNECT_TIMEOUT_MS = 20000;
