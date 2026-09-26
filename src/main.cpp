@@ -934,25 +934,10 @@ void loop() {
 
         updateAlarm();
 
-        if (currentDistance < 0) {
-
-            Serial.println(
-                "No echo"
-            );
-
-        } else {
-
-            Serial.print(
-                "Distance: "
-            );
-
-            Serial.print(
-                currentDistance
-            );
-
-            Serial.println(
-                " cm"
-            );
+       if (currentDistance >= 0) {
+    Serial.print("Distance: ");
+    Serial.print(currentDistance);
+    Serial.println(" cm");
         }
     }
 }
