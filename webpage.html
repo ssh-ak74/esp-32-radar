@@ -1,12 +1,15 @@
-  // this code needs to be connected to the actual code in order to work.
-
+// ts already on the src/main.cpp file
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1">
+
 <title>ESP32 Radar by AK74</title>
 
 <style>
+
 :root {
     --bg: #08090a;
     --panel: #0e1012;
@@ -26,8 +29,10 @@ body {
     background: var(--bg);
     color: var(--text);
     font-family: Inter, Arial, sans-serif;
+
     display: flex;
     justify-content: center;
+
     padding: 24px;
 }
 
@@ -39,71 +44,105 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+
     margin-bottom: 18px;
 }
 
 .title {
     font-size: 14px;
     font-weight: 600;
+
     letter-spacing: 0.08em;
+
     color: var(--text);
 }
 
 .status {
     display: flex;
     align-items: center;
+
     gap: 7px;
+
     color: var(--muted);
+
     font-size: 12px;
 }
 
 .status-dot {
     width: 7px;
     height: 7px;
+
     border-radius: 50%;
+
     background: var(--accent);
 }
 
 .radar-panel {
     background: var(--panel);
+
     border: 1px solid var(--border);
+
     border-radius: 14px;
+
     padding: 12px;
 }
 
 canvas {
     display: block;
+
     width: 100%;
     height: auto;
+
     border-radius: 9px;
 }
 
 .info {
     display: flex;
+
     justify-content: space-between;
     align-items: center;
+
     margin-top: 12px;
+
     padding: 0 4px;
 }
 
 .label {
     color: var(--muted);
+
     font-size: 12px;
 }
 
 .distance {
     font-size: 22px;
+
     font-weight: 600;
+
     letter-spacing: -0.03em;
+}
+
+.state {
+    margin-top: 8px;
+
+    padding: 0 4px;
+
+    color: var(--muted);
+
+    font-size: 12px;
 }
 
 footer {
     text-align: center;
+
     color: #4f5459;
+
     font-size: 11px;
+
     margin-top: 14px;
 }
+
 </style>
+
 </head>
 
 <body>
@@ -111,21 +150,54 @@ footer {
 <div class="app">
 
 <header>
-    <div class="title">RADAR</div>
+
+    <div class="title">
+        RADAR V2
+    </div>
 
     <div class="status">
+
         <span class="status-dot"></span>
-        <span id="status">ONLINE</span>
+
+        <span id="status">
+            ONLINE
+        </span>
+
     </div>
+
 </header>
 
 <div class="radar-panel">
-    <canvas id="radar" width="900" height="520"></canvas>
+
+    <canvas
+        id="radar"
+        width="900"
+        height="520">
+    </canvas>
 
     <div class="info">
-        <span class="label">DISTANCE</span>
-        <span class="distance" id="distance">-- cm</span>
+
+        <span class="label">
+            DISTANCE
+        </span>
+
+        <span
+            class="distance"
+            id="distance">
+            -- cm
+        </span>
+
     </div>
+
+    <div class="state">
+
+        STATUS:
+        <span id="state">
+            WAITING
+        </span>
+
+    </div>
+
 </div>
 
 <footer>
@@ -136,24 +208,68 @@ footer {
 
 <script>
 
-const canvas = document.getElementById("radar");
-const ctx = canvas.getContext("2d");
+const canvas =
+    document.getElementById("radar");
+
+const ctx =
+    canvas.getContext("2d");
 
 let distance = -1;
+
 let sweep = 0;
-let lastTime = performance.now();
+
+// --------------------------------------------------
+// State
+// --------------------------------------------------
+
+function getState() {
+
+    if (distance < 0) {
+        return "NO ECHO";
+    }
+
+    if (distance > 100) {
+        return "CLEAR";
+    }
+
+    if (distance > 50) {
+        return "WARNING";
+    }
+
+    if (distance > 20) {
+        return "DANGER";
+    }
+
+    return "CRITICAL";
+}
+
+// --------------------------------------------------
+// Radar
+// --------------------------------------------------
 
 function drawRadar() {
 
     const w = canvas.width;
     const h = canvas.height;
 
-    ctx.clearRect(0, 0, w, h);
+    ctx.clearRect(
+        0,
+        0,
+        w,
+        h
+    );
 
     ctx.fillStyle = "#090b0c";
-    ctx.fillRect(0, 0, w, h);
+
+    ctx.fillRect(
+        0,
+        0,
+        w,
+        h
+    );
 
     const cx = w / 2;
+
     const cy = h - 25;
 
     const radius = Math.min(
@@ -162,44 +278,92 @@ function drawRadar() {
     );
 
     // Range rings
+
     ctx.strokeStyle = "#1b2420";
+
     ctx.lineWidth = 1;
 
     for (let i = 1; i <= 4; i++) {
 
-        const r = radius * i / 4;
+        const r =
+            radius * i / 4;
 
         ctx.beginPath();
-        ctx.arc(cx, cy, r, Math.PI, Math.PI * 2);
+
+        ctx.arc(
+            cx,
+            cy,
+            r,
+            Math.PI,
+            Math.PI * 2
+        );
+
         ctx.stroke();
     }
 
     // Center line
-    ctx.strokeStyle = "#26302b";
+
+    ctx.strokeStyle =
+        "#26302b";
 
     ctx.beginPath();
-    ctx.moveTo(cx, cy);
-    ctx.lineTo(cx, cy - radius);
+
+    ctx.moveTo(
+        cx,
+        cy
+    );
+
+    ctx.lineTo(
+        cx,
+        cy - radius
+    );
+
     ctx.stroke();
 
-    // Side lines
-    ctx.beginPath();
-    ctx.moveTo(cx, cy);
-    ctx.lineTo(cx - radius, cy);
-    ctx.stroke();
+    // Left line
 
     ctx.beginPath();
-    ctx.moveTo(cx, cy);
-    ctx.lineTo(cx + radius, cy);
+
+    ctx.moveTo(
+        cx,
+        cy
+    );
+
+    ctx.lineTo(
+        cx - radius,
+        cy
+    );
+
+    ctx.stroke();
+
+    // Right line
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+        cx,
+        cy
+    );
+
+    ctx.lineTo(
+        cx + radius,
+        cy
+    );
+
     ctx.stroke();
 
     // Range labels
-    ctx.fillStyle = "#4e5752";
-    ctx.font = "11px Arial";
+
+    ctx.fillStyle =
+        "#4e5752";
+
+    ctx.font =
+        "11px Arial";
 
     for (let i = 1; i <= 4; i++) {
 
-        const r = radius * i / 4;
+        const r =
+            radius * i / 4;
 
         ctx.fillText(
             (i * 50) + " cm",
@@ -208,87 +372,187 @@ function drawRadar() {
         );
     }
 
-    // Sweep
+    // Sweep animation
+
     sweep += 0.018;
 
     if (sweep > Math.PI) {
         sweep = 0;
     }
 
-    const sx = cx + Math.cos(Math.PI + sweep) * radius;
-    const sy = cy + Math.sin(Math.PI + sweep) * radius;
+    const angle =
+        Math.PI + sweep;
 
-    ctx.strokeStyle = "rgba(140,255,154,0.65)";
+    const sx =
+        cx +
+        Math.cos(angle) *
+        radius;
+
+    const sy =
+        cy +
+        Math.sin(angle) *
+        radius;
+
+    ctx.strokeStyle =
+        "rgba(140,255,154,0.65)";
+
     ctx.lineWidth = 2;
 
     ctx.beginPath();
-    ctx.moveTo(cx, cy);
-    ctx.lineTo(sx, sy);
+
+    ctx.moveTo(
+        cx,
+        cy
+    );
+
+    ctx.lineTo(
+        sx,
+        sy
+    );
+
     ctx.stroke();
 
     // Target
-    if (distance > 0 && distance <= 200) {
 
-        const r = (distance / 200) * radius;
+    if (
+        distance > 0 &&
+        distance <= 200
+    ) {
 
-        const angle = -Math.PI / 2;
+        const r =
+            (distance / 200) *
+            radius;
 
-        const x = cx + Math.cos(angle) * r;
-        const y = cy + Math.sin(angle) * r;
+        const targetAngle =
+            -Math.PI / 2;
+
+        const x =
+            cx +
+            Math.cos(targetAngle) *
+            r;
+
+        const y =
+            cy +
+            Math.sin(targetAngle) *
+            r;
+
+        let targetColor =
+            "#8cff9a";
+
+        if (distance <= 50) {
+
+            targetColor =
+                "#ff5555";
+
+        } else if (distance <= 100) {
+
+            targetColor =
+                "#5599ff";
+        }
+
+        // Target dot
 
         ctx.beginPath();
-        ctx.arc(x, y, 5, 0, Math.PI * 2);
 
-        ctx.fillStyle = "#8cff9a";
+        ctx.arc(
+            x,
+            y,
+            5,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.fillStyle =
+            targetColor;
+
         ctx.fill();
 
-        ctx.beginPath();
-        ctx.arc(x, y, 11, 0, Math.PI * 2);
+        // Target ring
 
-        ctx.strokeStyle = "rgba(140,255,154,0.25)";
+        ctx.beginPath();
+
+        ctx.arc(
+            x,
+            y,
+            11,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.strokeStyle =
+            "rgba(140,255,154,0.25)";
+
         ctx.stroke();
     }
 
     // Center
-    ctx.beginPath();
-    ctx.arc(cx, cy, 4, 0, Math.PI * 2);
 
-    ctx.fillStyle = "#8cff9a";
+    ctx.beginPath();
+
+    ctx.arc(
+        cx,
+        cy,
+        4,
+        0,
+        Math.PI * 2
+    );
+
+    ctx.fillStyle =
+        "#8cff9a";
+
     ctx.fill();
 
-    requestAnimationFrame(drawRadar);
+    requestAnimationFrame(
+        drawRadar
+    );
 }
+
+// --------------------------------------------------
+// Distance API
+// --------------------------------------------------
 
 async function updateDistance() {
 
     try {
 
-        const response = await fetch(
-            "/distance",
-            { cache: "no-store" }
-        );
+        const response =
+            await fetch(
+                "/distance",
+                {
+                    cache: "no-store"
+                }
+            );
 
-        distance = parseFloat(
-            await response.text()
-        );
+        distance =
+            parseFloat(
+                await response.text()
+            );
 
         if (distance < 0) {
 
             document.getElementById(
                 "distance"
-            ).innerText = "-- cm";
+            ).innerText =
+                "-- cm";
 
         } else {
 
             document.getElementById(
                 "distance"
             ).innerText =
-                distance.toFixed(1) + " cm";
+                distance.toFixed(1)
+                + " cm";
         }
 
         document.getElementById(
+            "state"
+        ).innerText =
+            getState();
+
+        document.getElementById(
             "status"
-        ).innerText = "ONLINE";
+        ).innerText =
+            "ONLINE";
 
     } catch (error) {
 
@@ -296,17 +560,28 @@ async function updateDistance() {
 
         document.getElementById(
             "distance"
-        ).innerText = "-- cm";
+        ).innerText =
+            "-- cm";
+
+        document.getElementById(
+            "state"
+        ).innerText =
+            "OFFLINE";
 
         document.getElementById(
             "status"
-        ).innerText = "OFFLINE";
+        ).innerText =
+            "OFFLINE";
     }
 }
 
-setInterval(updateDistance, 200);
+setInterval(
+    updateDistance,
+    200
+);
 
 updateDistance();
+
 drawRadar();
 
 </script>
