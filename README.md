@@ -265,11 +265,6 @@ build_flags =
 ```
 
 Replace the placeholder values with your own network credentials.
-
-> 🔐 **Security:** Never commit your real Wi-Fi password to a public GitHub repository.
-
-For a public project, consider using a separate configuration file or another method for keeping credentials out of version control.
-
 ---
 
 # Upload the Firmware
